@@ -5,11 +5,17 @@ import { Toaster } from "react-hot-toast";
 
 import { api } from "~/utils/api";
 
+import Head from "next/head";
 import "~/styles/globals.css";
 
 const MyApp: AppType = ({ Component, pageProps }) => {
   return (
     <ClerkProvider>
+      <Head>
+        <title>Chirp</title>
+        <meta name="description" content="💭" />
+        <link rel="icon" href="/favicon.ico" />
+      </Head>
       <main className={GeistSans.className}>
         <Toaster position="bottom-center" />
         <Component {...pageProps} />

@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import type { User } from "@clerk/nextjs/server";
 import { clerkClient } from "@clerk/nextjs/server";
 import { type Post } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
@@ -14,6 +13,7 @@ import {
 
 import { Ratelimit } from "@upstash/ratelimit"; // for deno: see above
 import { Redis } from "@upstash/redis"; // see below for cloudflare and fastly adapters
+import { filterUserForClient } from "~/server/helpers/filterUserForClient";
 
 // Create a new ratelimiter, that allows 3 requests per 1 minute
 const ratelimit = new Ratelimit({
@@ -21,18 +21,6 @@ const ratelimit = new Ratelimit({
   limiter: Ratelimit.slidingWindow(3, "1 m"),
   analytics: true,
 });
-
-const filterUserForClient = (user: User) => {
-  return {
-    id: user.id,
-    username: user.username,
-    profileImageUrl: user.imageUrl,
-    externalUsername:
-      user.externalAccounts.find(
-        (externalAccount) => externalAccount.provider === "oauth_github",
-      )?.username || null,
-  };
-};
 
 export const postsRouter = createTRPCRouter({
   getAll: publicProcedure.query(async ({ ctx }) => {
@@ -73,6 +61,8 @@ const addUserDataToPosts = async (posts: Post[]) => {
     userId: userId,
     limit: 110,
   });
+
+  console.log(users);
 
   const filteredUsers = users.map(filterUserForClient);
 
