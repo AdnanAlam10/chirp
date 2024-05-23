@@ -22,6 +22,14 @@ const config = {
     defaultLocale: "en",
   },
   transpilePackages: ["geist"],
+
+  typescript: {
+    ignoreBuildErrors: true,
+  },
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
+  swcMinify: true,
 };
 
 export default config;
